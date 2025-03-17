@@ -1,0 +1,31 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const User_1 = __importDefault(require("../Controller/Auth/User"));
+const Middleware_1 = require("../Lib/Utils/Middleware");
+const User_2 = __importDefault(require("./User"));
+const Admin_1 = __importDefault(require("./Admin"));
+const FileUploadController_1 = require("../Controller/FileUploadController");
+const FileUpload_1 = require("../Lib/Utils/FileUpload");
+const SalesPerson_1 = require("../Controller/Auth/SalesPerson");
+const SalesPerson_2 = __importDefault(require("./SalesPerson"));
+const Common_1 = require("../Controller/Common");
+const QuotationPdfController_1 = require("../Controller/SalesPerson/QuotationPdfController");
+const Route = (0, express_1.Router)();
+Route.post("/user/login", User_1.default.login);
+// Route.post("/user/register", UserAuthController.register)
+Route.post("/admin/login", User_1.default.login);
+Route.post("/sales-person/send-otp", SalesPerson_1.SalesPersonOtpSent);
+Route.post("/sales-person/verify-otp", SalesPerson_1.SalesPersonVerifyOtp);
+Route.post("/sales-person/register", SalesPerson_1.CreateSalesPerson);
+Route.get("/sales-person/quotation-pdf/:id", QuotationPdfController_1.QuotationPdfGenerate);
+Route.use(Middleware_1.middleware);
+Route.get("/:userType/states", Common_1.GetAllState);
+Route.use("/user", User_2.default);
+Route.use("/admin", Admin_1.default);
+Route.use("/sales-person", SalesPerson_2.default);
+Route.use("/upload/:loction", FileUpload_1.UploadMulter.single("file"), FileUploadController_1.UploadDocoment);
+exports.default = Route;
