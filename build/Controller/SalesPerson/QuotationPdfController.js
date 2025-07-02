@@ -19,7 +19,8 @@ const pdf_lib_1 = require("pdf-lib");
 const pdf2json_1 = __importDefault(require("pdf2json"));
 const SiteSurvey_1 = __importDefault(require("../../Model/SiteSurvey"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const filePath = path_1.default.join(process.cwd(), "Asset/input.pdf");
+// const filePath = path.join(process.cwd(), 'Asset/input.pdf')
+const filePath = path_1.default.join(process.cwd(), 'Asset/divy_table.pdf');
 const pdfParser = new pdf2json_1.default();
 pdfParser.loadPDF(filePath);
 const pdfDataGlobal = {};
@@ -32,84 +33,182 @@ const QuotationPdfGenerate = (_req, res) => __awaiter(void 0, void 0, void 0, fu
         },
         {
             $lookup: {
-                from: "customerdetails",
-                foreignField: "_id",
-                localField: "customerId",
-                as: "customer"
+                from: 'customerdetails',
+                foreignField: '_id',
+                localField: 'customerId',
+                as: 'customer'
             }
         },
         {
-            $unwind: "$customer"
+            $unwind: '$customer'
         },
         {
             $lookup: {
-                from: "salespeople",
-                foreignField: "_id",
-                localField: "salesPersonId",
-                as: "salesPerson"
+                from: 'salespeople',
+                foreignField: '_id',
+                localField: 'salesPersonId',
+                as: 'salesPerson'
             }
         },
         {
-            $unwind: "$salesPerson"
+            $unwind: '$salesPerson'
         },
         {
             $lookup: {
-                from: "quotations",
-                foreignField: "SiteSurveyId",
-                localField: "_id",
-                as: "quotations"
+                from: 'quotations',
+                foreignField: 'SiteSurveyId',
+                localField: '_id',
+                as: 'quotations'
             }
         },
         {
-            $unwind: "$quotations"
+            $unwind: '$quotations'
         }
     ])
         .then((data) => __awaiter(void 0, void 0, void 0, function* () {
         // return res.send(pdfDataGlobal);
         if (data.length > 0) {
             const siteSurveyData = data[0];
+            // return res.send(siteSurveyData)
             const pdfDocBytes = (0, fs_1.readFileSync)(filePath);
             const pdfDoc = yield pdf_lib_1.PDFDocument.load(pdfDocBytes);
-            const therdPages = pdfDoc.getPage(2);
-            yield ReplaceContent(therdPages, "2", "Customer_Name", `${siteSurveyData.customer.title}${siteSurveyData.customer.customerContactName}`);
-            yield ReplaceContent(therdPages, "2", "Customer_Address", `${siteSurveyData.customer.customerAddress}`);
-            yield ReplaceContent(therdPages, "2", "Customer_District", `${siteSurveyData.customer.district}`);
-            yield ReplaceContent(therdPages, "2", "Customer_state", `${siteSurveyData.customer.state}`);
-            yield ReplaceContent(therdPages, "2", "Name: Customer_Name", `Name: ${siteSurveyData.customer.title}${siteSurveyData.customer.customerContactName}`, 10, 4.2);
-            yield ReplaceContent(therdPages, "2", "Mobile: CustomerMobile", `Mobile: ${siteSurveyData.customer.customerPhoneNo}`, 10, 4.2);
-            yield ReplaceContent(therdPages, "2", "Email: Customes_email", `Email: ${siteSurveyData.customer.emailId}`, 10, 4.2);
-            yield ReplaceContent(therdPages, "2", "3.18", `${Number(siteSurveyData.sensationLoadKW).toFixed(2)} KWP Mono Half Cut`, 10, 4.2);
-            yield ReplaceContent(therdPages, "2", "Name: SalespersonName", `Name: ${siteSurveyData.salesPerson.name}`, 10, 4.2);
-            yield ReplaceContent(therdPages, "2", "Mobile: SalespersonModile", `Mobile: ${siteSurveyData.salesPerson.phoneNumber}`, 10, 4.2);
-            yield ReplaceContent(therdPages, "2", "Email: SalespersonEmail", `Email: ${siteSurveyData.salesPerson.email}`, 10, 4.2);
-            const fourthPages = pdfDoc.getPage(4);
-            yield ReplaceContent(fourthPages, "4", "OnGrid", `${siteSurveyData.quotations.sytemType}`, 12, 2, 73);
-            yield ReplaceContent(fourthPages, "4", "3.18", `${Number(siteSurveyData.solarCapacity).toFixed(2)}`, 12, 5, 60);
-            const TotalPrice = siteSurveyData.quotations.data.reduce((acc, item) => {
-                return acc + Number(item === null || item === void 0 ? void 0 : item.price) * ((item === null || item === void 0 ? void 0 : item.quantity) || 1);
-            }, 0);
-            yield ReplaceContent(fourthPages, "4", "171720", `${Number(TotalPrice).toFixed(2)}`, 15, 5, -165);
-            // pdfDoc.removePage(0);
-            // pdfDoc.removePage(0);
-            // pdfDoc.removePage(0)
-            // pdfDoc.removePage(0)
-            // pdfDoc.removePage(2)
-            // pdfDoc.removePage(4)
+            const page = pdfDoc.getPage(0); // Get the first page of the PDF
+            const { width, height } = page.getSize();
+            // const therdPages = pdfDoc.getPage(2)
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Customer_Name",
+            // 	`${siteSurveyData.customer.title}${siteSurveyData.customer.customerContactName}`
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Customer_Address",
+            // 	`${siteSurveyData.customer.customerAddress}`
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Customer_District",
+            // 	`${siteSurveyData.customer.district}`
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Customer_state",
+            // 	`${siteSurveyData.customer.state}`
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Name: Customer_Name",
+            // 	`Name: ${siteSurveyData.customer.title}${siteSurveyData.customer.customerContactName}`,
+            // 	10,
+            // 	4.2
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Mobile: CustomerMobile",
+            // 	`Mobile: ${siteSurveyData.customer.customerPhoneNo}`,
+            // 	10,
+            // 	4.2
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Email: Customes_email",
+            // 	`Email: ${siteSurveyData.customer.emailId}`,
+            // 	10,
+            // 	4.2
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"3.18",
+            // 	`${Number(siteSurveyData.sensationLoadKW).toFixed(2)} KWP Mono Half Cut`,
+            // 	10,
+            // 	4.2
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Name: SalespersonName",
+            // 	`Name: ${siteSurveyData.salesPerson.name}`,
+            // 	10,
+            // 	4.2
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Mobile: SalespersonModile",
+            // 	`Mobile: ${siteSurveyData.salesPerson.phoneNumber}`,
+            // 	10,
+            // 	4.2
+            // )
+            // await ReplaceContent(
+            // 	therdPages,
+            // 	"2",
+            // 	"Email: SalespersonEmail",
+            // 	`Email: ${siteSurveyData.salesPerson.email}`,
+            // 	10,
+            // 	4.2
+            // )
+            // const fourthPages = pdfDoc.getPage(4)
+            // await ReplaceContent(
+            // 	fourthPages,
+            // 	"4",
+            // 	"OnGrid",
+            // 	`${siteSurveyData.quotations.sytemType}`,
+            // 	12,
+            // 	2,
+            // 	73
+            // )
+            // await ReplaceContent(
+            // 	fourthPages,
+            // 	"4",
+            // 	"3.18",
+            // 	`${Number(siteSurveyData.solarCapacity).toFixed(2)}`,
+            // 	12,
+            // 	5,
+            // 	60
+            // )
+            // const TotalPrice = siteSurveyData.quotations.data.reduce((acc, item) => {
+            // 	return acc + Number(item?.price) * (item?.quantity || 1)
+            // }, 0)
+            // await ReplaceContent(
+            // 	fourthPages,
+            // 	"4",
+            // 	"171720",
+            // 	`${Number(TotalPrice).toFixed(2)}`,
+            // 	15,
+            // 	5,
+            // 	-165
+            // )
+            page.drawRectangle({
+                x: 50,
+                y: 325,
+                width: width - 80,
+                height: 400,
+                color: (0, pdf_lib_1.rgb)(1, 1, 1) // White background for the rectangle
+            });
+            yield createDetailedQuotationTable(page, siteSurveyData, width + 10, height - 15);
             // Save the modified PDF to a buffer
             const pdfBytes = yield pdfDoc.save();
             res.set({
-                "Content-Type": "application/pdf",
-                "Content-Disposition": "inline; filename=output.pdf"
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': 'inline; filename=output.pdf'
             });
             // Send the modified PDF
             res.send(Buffer.from(pdfBytes));
         }
         else {
-            res.status(403).send("No Quotation Found");
+            res.status(403).send('No Quotation Found');
         }
     }))
         .catch(() => {
-        res.status(403).send("No Quotation Found");
+        res.status(403).send('No Quotation Found');
     });
 });
 exports.QuotationPdfGenerate = QuotationPdfGenerate;
@@ -125,8 +224,8 @@ const ReplaceContent = (page_1, pageId_1, oldText_1, newText_1, ...args_1) => __
             const adjustedY = 644 - getCoordinate.y; // Example for flipping y-axis
             const scaledX = pageWidth - 261 - getCoordinate.x - adjustX; // Example scale factor for x position
             const scaledY = adjustedY + gap + adjustY; // Example scale factor for y position
-            if (getCoordinate.text === "3.18") {
-                console.log("width", getCoordinate);
+            if (getCoordinate.text === '3.18') {
+                console.log('width', getCoordinate);
             }
             page.drawRectangle({
                 x: scaledX - 3, // X-coordinate of "hello"
@@ -144,7 +243,7 @@ const ReplaceContent = (page_1, pageId_1, oldText_1, newText_1, ...args_1) => __
         });
     }
 });
-pdfParser.on("pdfParser_dataReady", (pdfData) => {
+pdfParser.on('pdfParser_dataReady', (pdfData) => {
     const pageIdList = [2, 4];
     pageIdList.forEach((pageId) => {
         // const pageId = 2;
@@ -154,7 +253,7 @@ pdfParser.on("pdfParser_dataReady", (pdfData) => {
             page.Texts.forEach((text) => {
                 const textContent = decodeURIComponent(text.R[0].T); // Text item
                 // console.log('textContent', textContent)
-                if (![" ", "   "].includes(textContent)) {
+                if (![' ', '   '].includes(textContent)) {
                     pdfDataList.push({
                         x: text.x,
                         y: text.y,
@@ -172,3 +271,100 @@ pdfParser.on("pdfParser_dataReady", (pdfData) => {
         pdfDataGlobal[pageId] = pdfDataList;
     });
 });
+// Function to create a detailed quotation table
+const createDetailedQuotationTable = (page, siteSurveyData, pageWidth, pageHeight) => __awaiter(void 0, void 0, void 0, function* () {
+    const startX = 50;
+    const startY = pageHeight - 100;
+    const rowHeight = 35;
+    const colWidth = (pageWidth - 100) / 3;
+    // Title
+    // page.drawText('Quotation Details', {
+    //     x: startX,
+    //     y: startY + 30,
+    //     size: 16,
+    //     color: rgb(0, 0, 0)
+    // })
+    // Table headers with background
+    const headers = ['Description', 'Quantity', 'Amount'];
+    drawTableRow(page, headers, startX, startY, colWidth, rowHeight, true);
+    // Data rows
+    let currentY = startY - rowHeight;
+    let totalAmount = 0;
+    page.drawText('Total Amount', {
+        x: startX + 10,
+        y: currentY - 15,
+        size: 14,
+        color: (0, pdf_lib_1.rgb)(0, 0, 0)
+    });
+    for (const item of siteSurveyData.quotations.data) {
+        const itemTotal = Number((item === null || item === void 0 ? void 0 : item.price) || 0) * ((item === null || item === void 0 ? void 0 : item.quantity) || 1);
+        totalAmount += itemTotal;
+        // console.log('itemTotal', itemTotal, 'item', item)
+        const rowData = [
+            `${(item === null || item === void 0 ? void 0 : item.productName) || 'Item description'} ${(item === null || item === void 0 ? void 0 : item.spvType) ? '- ' + (item === null || item === void 0 ? void 0 : item.spvType) : ''} ${(item === null || item === void 0 ? void 0 : item.type) ? '- ' + (item === null || item === void 0 ? void 0 : item.type) : ''}`,
+            ((item === null || item === void 0 ? void 0 : item.quantity) || 1).toString(),
+            `${itemTotal.toFixed(2)}`
+        ];
+        // console.log('rowData', rowData)
+        drawTableRow(page, rowData, startX, currentY, colWidth, rowHeight, false);
+        currentY -= rowHeight;
+    }
+    // Total amount row
+    currentY -= 0;
+    page.drawRectangle({
+        x: startX,
+        y: currentY - rowHeight,
+        width: pageWidth - 100,
+        height: rowHeight,
+        color: (0, pdf_lib_1.rgb)(201 / 255, 236 / 255, 225 / 255)
+        // borderColor: rgb(0, 0, 0),
+        // borderWidth: 0.5
+    });
+    page.drawText('Total Amount', {
+        x: startX + 10,
+        y: currentY - 20,
+        size: 11,
+        color: (0, pdf_lib_1.rgb)(0, 0, 0)
+    });
+    page.drawText(`${totalAmount.toFixed(2)}`, {
+        x: startX + (pageWidth - 165),
+        y: currentY - 20,
+        size: 11,
+        color: (0, pdf_lib_1.rgb)(0, 0, 0)
+    });
+});
+const drawTableRow = (page, data, startX, startY, colWidth, rowHeight, isHeader = false, backgroundColor) => {
+    data.forEach((text, colIndex) => {
+        const x = startX + colIndex * colWidth;
+        if (colIndex === 0) {
+            colWidth = colWidth + 70;
+        }
+        else {
+            colWidth = colWidth - 52.5;
+        }
+        // Draw cell background
+        const bgColor = backgroundColor ||
+            (isHeader ? (0, pdf_lib_1.rgb)(254 / 255, 234 / 255, 206 / 255) : (0, pdf_lib_1.rgb)(0.95, 0.95, 0.95));
+        // Draw cell background
+        const cellBgColor = isHeader
+            ? (0, pdf_lib_1.rgb)(254 / 255, 234 / 255, 206 / 255)
+            : (0, pdf_lib_1.rgb)(0.98, 0.98, 1);
+        page.drawRectangle({
+            x,
+            y: startY - rowHeight,
+            width: colWidth,
+            height: rowHeight,
+            color: backgroundColor || cellBgColor,
+            borderColor: (0, pdf_lib_1.rgb)(0.7, 0.7, 0.8),
+            borderWidth: 0.5
+        });
+        // Draw cell text
+        page.drawText(text, {
+            x: x + 10 + (colIndex === 2 ? colWidth - 70 : 0), // Adjust for last column
+            y: startY - rowHeight / 2 - 5,
+            size: isHeader ? 11 : 9,
+            // font: isHeader ? 'Helvetica-Bold' : 'Helvetica',
+            color: (0, pdf_lib_1.rgb)(0, 0, 0)
+        });
+    });
+};
