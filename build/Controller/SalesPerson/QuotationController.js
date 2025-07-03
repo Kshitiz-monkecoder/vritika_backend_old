@@ -257,7 +257,7 @@ const SendQuotation = (req, res) => {
                                         {
                                             type: "document",
                                             document: {
-                                                link: `http://13.234.117.179:8000/api/v1/sales-person/quotation-pdf/${data.SiteSurveyId}`,
+                                                link: `https://api.viritika.com/api/v1/sales-person/quotation-pdf/${data.SiteSurveyId}`,
                                                 filename: "CRM.pdf"
                                             }
                                         }
@@ -279,7 +279,13 @@ const SendQuotation = (req, res) => {
             })
                 .then(() => __awaiter(void 0, void 0, void 0, function* () {
                 res.send({ status: true, message: "Successful quotation send via whatsapp" });
-            }));
+            })).catch((error) => {
+                console.error("Error sending quotation via WhatsApp:", error);
+                res.status(ResponseCode_1.ResponseCode.BAD_REQUEST).json({
+                    status: false,
+                    message: "Failed to send quotation via WhatsApp"
+                });
+            });
         }
         else {
             res.status(ResponseCode_1.ResponseCode.NOT_FOUND_ERROR).json({

@@ -261,7 +261,7 @@ export const SendQuotation = (req: Request<{ id: string }>, res: Response<Res>) 
 												{
 													type: "document",
 													document: {
-														link: `http://13.234.117.179:8000/api/v1/sales-person/quotation-pdf/${data.SiteSurveyId}`,
+														link: `https://api.viritika.com/api/v1/sales-person/quotation-pdf/${data.SiteSurveyId}`,
 														filename: "CRM.pdf"
 													}
 												}
@@ -283,6 +283,12 @@ export const SendQuotation = (req: Request<{ id: string }>, res: Response<Res>) 
 					})
 					.then(async () => {
 						res.send({ status: true, message: "Successful quotation send via whatsapp" })
+					}).catch((error) => {
+						console.error("Error sending quotation via WhatsApp:", error)
+						res.status(ResponseCode.BAD_REQUEST).json({
+							status: false,
+							message: "Failed to send quotation via WhatsApp"
+						})
 					})
 			} else {
 				res.status(ResponseCode.NOT_FOUND_ERROR).json({
