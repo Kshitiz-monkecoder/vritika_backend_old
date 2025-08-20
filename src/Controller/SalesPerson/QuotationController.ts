@@ -136,7 +136,7 @@ export const GetProductSectionList = (
         })
 }
 
-export const GetInverter = () => {}
+export const GetInverter = () => { }
 
 export const GetQuotationProduct = (
     _req: Request,
