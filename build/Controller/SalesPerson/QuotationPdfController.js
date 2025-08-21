@@ -20,7 +20,7 @@ const pdf2json_1 = __importDefault(require("pdf2json"));
 const SiteSurvey_1 = __importDefault(require("../../Model/SiteSurvey"));
 const mongoose_1 = __importDefault(require("mongoose"));
 // const filePath = path.join(process.cwd(), 'Asset/input.pdf')
-const filePath = path_1.default.join(process.cwd(), 'Asset/divy_table.pdf');
+const filePath = path_1.default.join(process.cwd(), 'Asset/DivyPowerQuotation.pdf');
 const pdfParser = new pdf2json_1.default();
 pdfParser.loadPDF(filePath);
 const pdfDataGlobal = {};
@@ -72,120 +72,75 @@ const QuotationPdfGenerate = (_req, res) => __awaiter(void 0, void 0, void 0, fu
             // return res.send(siteSurveyData)
             const pdfDocBytes = (0, fs_1.readFileSync)(filePath);
             const pdfDoc = yield pdf_lib_1.PDFDocument.load(pdfDocBytes);
-            const page = pdfDoc.getPage(0); // Get the first page of the PDF
+            // const sixthPages = pdfDoc.getPage(6)
+            const pdfForm = pdfDoc.getForm();
+            const pdfFields = pdfForm.getFields();
+            // console.log(' Name =>', pdfFields.map(field => ({name: field.getName(), title: (field as any).getText(), ...field})))
+            for (const field of pdfFields) {
+                if (field.getText() === 'NAME') {
+                    ;
+                    field.setText(`${siteSurveyData.customer.title}${siteSurveyData.customer.customerContactName}`);
+                }
+                if (field.getText() === 'ADD') {
+                    ;
+                    field.setText(`${siteSurveyData.customer.customerAddress}`);
+                }
+                if (field.getText() === 'STATE') {
+                    ;
+                    field.setText(`${siteSurveyData.customer.state}`);
+                }
+                if (field.getText() === 'DISTRICT') {
+                    ;
+                    field.setText(`${siteSurveyData.customer.district}`);
+                }
+                if (field.getText() === 'CU_NU') {
+                    ;
+                    field.setText(`${siteSurveyData.customer.customerPhoneNo}`);
+                }
+                if (field.getText() === 'CUS_MAIL') {
+                    ;
+                    field.setText(`${siteSurveyData.customer.emailId}`);
+                }
+                if (field.getText() === 'CU_NU') {
+                    ;
+                    field.setText(`${siteSurveyData.customer.customerPhoneNo}`);
+                }
+                if (field.getText() === 'ROOF') {
+                    ;
+                    field.setText(`${siteSurveyData.roofSurfaceType || ''}`);
+                }
+                if (field.getText() === 'PR_C') {
+                    ;
+                    field.setText(`${siteSurveyData.solarCapacity}`);
+                }
+                if (field.getText() === 'SPV_TE') {
+                    ;
+                    field.setText(`${siteSurveyData.quotations.sytemType || ''}`);
+                }
+                if (field.getText() === 'LENGTH') {
+                    ;
+                    field.setText(`${siteSurveyData.length || ''}`);
+                }
+                if (field.getText() === 'WIDTH') {
+                    ;
+                    field.setText(`${siteSurveyData.width || ''}`);
+                }
+                if (field.getText() === 'SA_LOAD') {
+                    ;
+                    field.setText(`${siteSurveyData.sensationLoadKW || ''}`);
+                }
+                if (field.getText() === 'SO_CAP') {
+                    ;
+                    field.setText(`${siteSurveyData.solarCapacity || ''}`);
+                }
+                if (field.getText() === 'TOTAL_FL') {
+                    ;
+                    field.setText(`${siteSurveyData.totalRoofs || ''}`);
+                }
+            }
+            pdfForm.flatten();
+            const page = pdfDoc.getPage(7); // Get the eighth page of the PDF
             const { width, height } = page.getSize();
-            // const therdPages = pdfDoc.getPage(2)
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Customer_Name",
-            // 	`${siteSurveyData.customer.title}${siteSurveyData.customer.customerContactName}`
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Customer_Address",
-            // 	`${siteSurveyData.customer.customerAddress}`
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Customer_District",
-            // 	`${siteSurveyData.customer.district}`
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Customer_state",
-            // 	`${siteSurveyData.customer.state}`
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Name: Customer_Name",
-            // 	`Name: ${siteSurveyData.customer.title}${siteSurveyData.customer.customerContactName}`,
-            // 	10,
-            // 	4.2
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Mobile: CustomerMobile",
-            // 	`Mobile: ${siteSurveyData.customer.customerPhoneNo}`,
-            // 	10,
-            // 	4.2
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Email: Customes_email",
-            // 	`Email: ${siteSurveyData.customer.emailId}`,
-            // 	10,
-            // 	4.2
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"3.18",
-            // 	`${Number(siteSurveyData.sensationLoadKW).toFixed(2)} KWP Mono Half Cut`,
-            // 	10,
-            // 	4.2
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Name: SalespersonName",
-            // 	`Name: ${siteSurveyData.salesPerson.name}`,
-            // 	10,
-            // 	4.2
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Mobile: SalespersonModile",
-            // 	`Mobile: ${siteSurveyData.salesPerson.phoneNumber}`,
-            // 	10,
-            // 	4.2
-            // )
-            // await ReplaceContent(
-            // 	therdPages,
-            // 	"2",
-            // 	"Email: SalespersonEmail",
-            // 	`Email: ${siteSurveyData.salesPerson.email}`,
-            // 	10,
-            // 	4.2
-            // )
-            // const fourthPages = pdfDoc.getPage(4)
-            // await ReplaceContent(
-            // 	fourthPages,
-            // 	"4",
-            // 	"OnGrid",
-            // 	`${siteSurveyData.quotations.sytemType}`,
-            // 	12,
-            // 	2,
-            // 	73
-            // )
-            // await ReplaceContent(
-            // 	fourthPages,
-            // 	"4",
-            // 	"3.18",
-            // 	`${Number(siteSurveyData.solarCapacity).toFixed(2)}`,
-            // 	12,
-            // 	5,
-            // 	60
-            // )
-            // const TotalPrice = siteSurveyData.quotations.data.reduce((acc, item) => {
-            // 	return acc + Number(item?.price) * (item?.quantity || 1)
-            // }, 0)
-            // await ReplaceContent(
-            // 	fourthPages,
-            // 	"4",
-            // 	"171720",
-            // 	`${Number(TotalPrice).toFixed(2)}`,
-            // 	15,
-            // 	5,
-            // 	-165
-            // )
             page.drawRectangle({
                 x: 50,
                 y: 325,
@@ -204,7 +159,7 @@ const QuotationPdfGenerate = (_req, res) => __awaiter(void 0, void 0, void 0, fu
             res.send(Buffer.from(pdfBytes));
         }
         else {
-            res.status(403).send('No Quotation Found');
+            res.status(403).send('No Quotation Found length');
         }
     }))
         .catch(() => {
