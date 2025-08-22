@@ -220,13 +220,16 @@ const CreateQuotation = (req, res) => {
 exports.CreateQuotation = CreateQuotation;
 const SendQuotation = (req, res) => {
     var _a;
+    console.log((_a = req.User) === null || _a === void 0 ? void 0 : _a._id);
     Quotation_1.default.findOne({
-        salesPersonId: new mongoose_1.default.Types.ObjectId(((_a = req.User) === null || _a === void 0 ? void 0 : _a._id) || ''),
+        // salesPersonId: new mongoose.Types.ObjectId(req.User?._id || ''),
         _id: new mongoose_1.default.Types.ObjectId(req.params.id)
     })
         .populate('customerId')
         .then((data) => {
+        var _a;
         if (data && data.SiteSurveyId) {
+            const pdfUrl = `https://api.vritika.co/api/v1/sales-person/quotation-pdf/${data.SiteSurveyId}`;
             axios_1.default
                 .request({
                 method: 'POST',
@@ -256,7 +259,7 @@ const SendQuotation = (req, res) => {
                                         {
                                             type: 'document',
                                             document: {
-                                                link: `https://api.viritika.com/api/v1/sales-person/quotation-pdf/${data.SiteSurveyId}`,
+                                                link: pdfUrl,
                                                 filename: 'CRM.pdf'
                                             }
                                         }
@@ -267,8 +270,7 @@ const SendQuotation = (req, res) => {
                                     parameters: [
                                         {
                                             type: 'text',
-                                            text: data.customerId
-                                                .customerContactName
+                                            text: (_a = data === null || data === void 0 ? void 0 : data.customerId) === null || _a === void 0 ? void 0 : _a.customerContactName
                                         }
                                     ]
                                 }
@@ -278,7 +280,7 @@ const SendQuotation = (req, res) => {
                 })
             })
                 .then(() => __awaiter(void 0, void 0, void 0, function* () {
-                res.sendStatus(ResponseCode_1.ResponseCode.SUCCESS).send({
+                res.status(ResponseCode_1.ResponseCode.SUCCESS).send({
                     status: true,
                     message: 'Successful quotation send via whatsapp'
                 });

@@ -223,13 +223,15 @@ export const CreateQuotation = (req: Request, res: Response<Res>) => {
 }
 
 export const SendQuotation = (req: Request<{ id: string }>, res: Response<Res>) => {
+    console.log(req.User?._id)
     QuotationModel.findOne({
-        salesPersonId: new mongoose.Types.ObjectId(req.User?._id || ''),
+        // salesPersonId: new mongoose.Types.ObjectId(req.User?._id || ''),
         _id: new mongoose.Types.ObjectId(req.params.id)
     })
         .populate<{ customerId: CustomerModelDataType }>('customerId')
         .then((data) => {
             if (data && data.SiteSurveyId) {
+                const pdfUrl = `https://api.vritika.co/api/v1/sales-person/quotation-pdf/${data.SiteSurveyId}`
                 axios
                     .request({
                         method: 'POST',
@@ -260,7 +262,7 @@ export const SendQuotation = (req: Request<{ id: string }>, res: Response<Res>) 
                                                 {
                                                     type: 'document',
                                                     document: {
-                                                        link: `https://api.viritika.com/api/v1/sales-person/quotation-pdf/${data.SiteSurveyId}`,
+                                                        link: pdfUrl,
                                                         filename: 'CRM.pdf'
                                                     }
                                                 }
@@ -271,8 +273,7 @@ export const SendQuotation = (req: Request<{ id: string }>, res: Response<Res>) 
                                             parameters: [
                                                 {
                                                     type: 'text',
-                                                    text: data.customerId
-                                                        .customerContactName
+                                                    text: data?.customerId?.customerContactName
                                                 }
                                             ]
                                         }
@@ -282,7 +283,7 @@ export const SendQuotation = (req: Request<{ id: string }>, res: Response<Res>) 
                         })
                     })
                     .then(async () => {
-                        res.sendStatus(ResponseCode.SUCCESS).send({
+                        res.status(ResponseCode.SUCCESS).send({
                             status: true,
                             message: 'Successful quotation send via whatsapp'
                         })
