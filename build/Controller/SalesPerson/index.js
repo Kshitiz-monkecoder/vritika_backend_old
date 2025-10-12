@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetQuotationSummary = exports.GetQuotationChart = exports.UpdateSalesPersonProfile = exports.GetSalesPersonProfile = void 0;
+exports.GetSalesPersonHierarchy = exports.GetMySubSalesPersons = exports.CreateSubSalesPerson = exports.GetQuotationSummary = exports.GetQuotationChart = exports.UpdateSalesPersonProfile = exports.GetSalesPersonProfile = void 0;
 const ResponseCode_1 = require("../../Lib/Utils/ResponseCode");
 const SalesPerson_1 = __importDefault(require("../../Model/SalesPerson"));
 const mongoose_1 = __importDefault(require("mongoose"));
@@ -202,3 +202,120 @@ const GetQuotationSummary = (req, res) => {
     });
 };
 exports.GetQuotationSummary = GetQuotationSummary;
+// SalesPerson: Create Sub-SalesPerson (with incremented level)
+const CreateSubSalesPerson = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const parentSalesPersonId = (_a = req.User) === null || _a === void 0 ? void 0 : _a._id;
+        // Get parent SalesPerson to determine the level
+        const parentSalesPerson = yield SalesPerson_1.default.findById(parentSalesPersonId);
+        if (!parentSalesPerson) {
+            res.status(ResponseCode_1.ResponseCode.NOT_FOUND_ERROR).json({
+                status: false,
+                message: 'Parent SalesPerson not found'
+            });
+            return;
+        }
+        // Check if parent is at Level 5 (maximum level)
+        if (parentSalesPerson.level >= 5) {
+            res.status(ResponseCode_1.ResponseCode.VALIDATION_ERROR).json({
+                status: false,
+                message: 'Maximum level reached. Level 5 SalesPersons cannot create sub-SalesPersons.'
+            });
+            return;
+        }
+        // Create new SalesPerson with incremented level
+        const newSalesPerson = new SalesPerson_1.default(Object.assign(Object.assign({}, req.body), { createdBy: parentSalesPersonId, createdByType: "SalesPerson", level: parentSalesPerson.level + 1, parentSalesPerson: parentSalesPersonId, adminId: parentSalesPerson.adminId // Inherit adminId from parent
+         }));
+        const savedSalesPerson = yield newSalesPerson.save();
+        res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
+            status: true,
+            data: savedSalesPerson,
+            message: `Sub-SalesPerson created successfully at level ${savedSalesPerson.level}`
+        });
+    }
+    catch (error) {
+        res.status(ResponseCode_1.ResponseCode.SERVER_ERROR).json({
+            status: false,
+            message: 'Error creating sub-SalesPerson',
+            error
+        });
+    }
+});
+exports.CreateSubSalesPerson = CreateSubSalesPerson;
+// SalesPerson: Get all Sub-SalesPersons created by this SalesPerson
+const GetMySubSalesPersons = (req, res) => {
+    var _a;
+    const salesPersonId = (_a = req.User) === null || _a === void 0 ? void 0 : _a._id;
+    SalesPerson_1.default.find({
+        createdBy: salesPersonId,
+        createdByType: "SalesPerson"
+    })
+        .select("-token -password")
+        .populate("parentSalesPerson", "name email level")
+        .then((subSalesPersons) => {
+        res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
+            status: true,
+            data: subSalesPersons,
+            message: 'Sub-SalesPersons retrieved successfully'
+        });
+    })
+        .catch((error) => {
+        res.status(ResponseCode_1.ResponseCode.SERVER_ERROR).json({
+            status: false,
+            message: 'Error fetching sub-SalesPersons',
+            error
+        });
+    });
+};
+exports.GetMySubSalesPersons = GetMySubSalesPersons;
+// SalesPerson: Get entire hierarchy tree (downline)
+const GetSalesPersonHierarchy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const salesPersonId = (_a = req.User) === null || _a === void 0 ? void 0 : _a._id;
+        const hierarchy = yield SalesPerson_1.default.aggregate([
+            { $match: { _id: new mongoose_1.default.Types.ObjectId(salesPersonId) } },
+            {
+                $graphLookup: {
+                    from: "salespersons",
+                    startWith: "$_id",
+                    connectFromField: "_id",
+                    connectToField: "parentSalesPerson",
+                    as: "hierarchy",
+                    maxDepth: 4 // Max 4 levels down from current (total 5 levels max)
+                }
+            },
+            {
+                $project: {
+                    name: 1,
+                    email: 1,
+                    level: 1,
+                    adminId: 1,
+                    parentSalesPerson: 1,
+                    hierarchy: {
+                        _id: 1,
+                        name: 1,
+                        email: 1,
+                        level: 1,
+                        parentSalesPerson: 1,
+                        adminId: 1
+                    }
+                }
+            }
+        ]);
+        res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
+            status: true,
+            data: hierarchy[0],
+            message: 'Hierarchy retrieved successfully (Max 5 levels)'
+        });
+    }
+    catch (error) {
+        res.status(ResponseCode_1.ResponseCode.SERVER_ERROR).json({
+            status: false,
+            message: 'Error fetching hierarchy',
+            error
+        });
+    }
+});
+exports.GetSalesPersonHierarchy = GetSalesPersonHierarchy;

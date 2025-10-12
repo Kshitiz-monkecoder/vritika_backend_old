@@ -18,9 +18,14 @@ export const AddUser = (
 	})
 		.then(async () => {
 			const code = await GenerateUniqueReferralCode(8)
+			
+			// Get SuperAdmin ID from authenticated user (if creating from SuperAdmin context)
+			const createdById = (req as any).user?._id
+			
 			const newUser = new UserModel({
 				...req.body,
-				code
+				code,
+				createdBy: createdById // Reference to creator
 			})
 			
 			if (req.body.password) newUser.password = passwordHash.generate(req.body.password)				

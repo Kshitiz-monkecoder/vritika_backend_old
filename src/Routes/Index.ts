@@ -1,8 +1,10 @@
 import { Router } from "express"
 import UserAuthController from "../Controller/Auth/User"
+import SuperAdminAuthController from "../Controller/Auth/SuperAdmin"
 import { middleware } from "../Lib/Utils/Middleware"
 import UserRouter from "./User"
 import AdminRouter from "./Admin"
+import SuperAdminRouter from "./SuperAdmin"
 import { UploadDocoment } from "../Controller/FileUploadController"
 import { UploadMulter } from "../Lib/Utils/FileUpload"
 import { CreateSalesPerson, SalesPersonOtpSent, SalesPersonVerifyOtp } from "../Controller/Auth/SalesPerson"
@@ -17,6 +19,9 @@ Route.post("/user/login", UserAuthController.login)
 
 Route.post("/admin/login", UserAuthController.login)
 
+Route.post("/super-admin/create", SuperAdminAuthController.create)
+Route.post("/super-admin/login", SuperAdminAuthController.login)
+
 Route.post("/sales-person/send-otp", SalesPersonOtpSent)
 Route.post("/sales-person/verify-otp", SalesPersonVerifyOtp)
 
@@ -29,6 +34,7 @@ Route.use(middleware)
 Route.get("/:userType/states", GetAllState)
 Route.use("/user", UserRouter)
 Route.use("/admin", AdminRouter)
+Route.use("/super-admin", SuperAdminRouter)
 Route.use("/sales-person", SalesPersonRoute)
 
 

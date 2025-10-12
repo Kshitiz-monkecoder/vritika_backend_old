@@ -1,4 +1,5 @@
 import { Document } from "mongoose"
+import mongoose from "mongoose"
 
 export interface SalesPersonModelDataType extends Document {
     name: string;
@@ -20,4 +21,9 @@ export interface SalesPersonModelDataType extends Document {
     referralCode: string
     token?: string
     comparePassword?(candidatePassword: string): boolean
+    createdBy?: mongoose.Types.ObjectId // Reference to Admin or SalesPerson who created this
+    createdByType?: "Admin" | "SalesPerson" // Type of creator
+    level: number // Level in hierarchy: 1-5 (Max level is 5)
+    parentSalesPerson?: mongoose.Types.ObjectId // Reference to parent SalesPerson if created by SalesPerson
+    adminId: mongoose.Types.ObjectId // Reference to the Admin who owns this entire hierarchy
 }

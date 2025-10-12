@@ -32,13 +32,21 @@ import {
 	GetQuotationChart,
 	GetQuotationSummary,
 	GetSalesPersonProfile,
-	UpdateSalesPersonProfile
+	UpdateSalesPersonProfile,
+	CreateSubSalesPerson,
+	GetMySubSalesPersons,
+	GetSalesPersonHierarchy
 } from "../Controller/SalesPerson"
 
 const SalesPersonRoute: Router = Router()
 
 SalesPersonRoute.get("/profile", GetSalesPersonProfile) // Get sales person profile
 SalesPersonRoute.put("/profile", UpdateSalesPersonProfile) // Update sales person profile
+
+// Sub-SalesPerson Management (Multi-level)
+SalesPersonRoute.post("/sub-salesperson", CreateSubSalesPerson) // Create a sub-SalesPerson with incremented level
+SalesPersonRoute.get("/sub-salesperson", GetMySubSalesPersons) // Get all sub-SalesPersons created by this SalesPerson
+SalesPersonRoute.get("/hierarchy", GetSalesPersonHierarchy) // Get entire hierarchy tree
 
 SalesPersonRoute.post("/customers", CreateCustomer) // Create a new customer
 SalesPersonRoute.post("/customer-verify", CustomerVerifyOtp)

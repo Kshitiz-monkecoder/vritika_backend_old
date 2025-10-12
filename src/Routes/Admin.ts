@@ -25,7 +25,8 @@ import {
 	DeleteSalesPerson,
 	GetAllSalesPersons,
 	GetSalesPersonById,
-	UpdateSalesPerson
+	UpdateSalesPerson,
+	GetSalesPersonHierarchyTree
 } from "../Controller/Admin/SalesPersonController"
 import {
 	GetAllAdmins,
@@ -67,6 +68,7 @@ AdminRouter.delete("/users/:id", DeleteUser)
 AdminRouter.post("/sales-persons", AddSalesPerson)
 AdminRouter.put("/sales-persons/:id", UpdateSalesPerson)
 AdminRouter.get("/sales-persons", GetAllSalesPersons)
+AdminRouter.get("/sales-persons/hierarchy-tree", GetSalesPersonHierarchyTree) // Get hierarchy tree
 AdminRouter.get("/sales-persons/:id", GetSalesPersonById)
 AdminRouter.delete("/sales-persons/:id", DeleteSalesPerson)
 

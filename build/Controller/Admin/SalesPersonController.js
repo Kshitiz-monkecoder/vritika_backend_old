@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteSalesPerson = exports.GetSalesPersonById = exports.GetAllSalesPersons = exports.UpdateSalesPerson = exports.AddSalesPerson = void 0;
+exports.GetSalesPersonHierarchyTree = exports.DeleteSalesPerson = exports.GetSalesPersonById = exports.GetAllSalesPersons = exports.UpdateSalesPerson = exports.AddSalesPerson = void 0;
 const ResponseCode_1 = require("../../Lib/Utils/ResponseCode"); // Custom response codes utility
 const ErrorHandler_1 = require("../../Lib/Utils/ErrorHandler"); // Error handling utils
 const SalesPerson_1 = __importDefault(require("../../Model/SalesPerson"));
@@ -36,7 +36,11 @@ const AddSalesPerson = (req, res) => __awaiter(void 0, void 0, void 0, function*
         status: "required|string|in:Inactive,Active,Pending"
     })
         .then(() => {
-        const salesPerson = new SalesPerson_1.default(Object.assign({}, req.body));
+        var _a;
+        // Get Admin ID from authenticated user
+        const adminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const salesPerson = new SalesPerson_1.default(Object.assign(Object.assign({}, req.body), { createdBy: adminId, createdByType: "User", level: 1, parentSalesPerson: null, adminId: adminId // Admin who owns this entire hierarchy
+         }));
         salesPerson
             .save()
             .then((savedSalesPerson) => {
@@ -78,8 +82,11 @@ const UpdateSalesPerson = (req, res) => {
         status: "string|in:Inactive,Active,Pending"
     })
         .then(() => {
+        var _a;
         const { id } = req.params;
-        SalesPerson_1.default.findByIdAndUpdate(id, req.body, { new: true })
+        const adminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        // Only update if this SalesPerson belongs to this Admin's hierarchy
+        SalesPerson_1.default.findOneAndUpdate({ _id: id, adminId: adminId }, req.body, { new: true })
             .then((updatedSalesPerson) => {
             if (updatedSalesPerson) {
                 res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
@@ -91,7 +98,7 @@ const UpdateSalesPerson = (req, res) => {
             else {
                 res.status(ResponseCode_1.ResponseCode.NOT_FOUND_ERROR).json({
                     status: false,
-                    message: "SalesPerson not found",
+                    message: "SalesPerson not found or you don't have permission",
                 });
             }
         })
@@ -107,31 +114,39 @@ const UpdateSalesPerson = (req, res) => {
     });
 };
 exports.UpdateSalesPerson = UpdateSalesPerson;
-// Get all SalesPersons
-const GetAllSalesPersons = (_req, res) => {
-    SalesPerson_1.default.aggregate([
-        {
-            $project: {
-                token: 0
-            }
-        }
-    ])
-        .then((salesPersons) => {
+// Get all SalesPersons created by this Admin (including all levels in hierarchy)
+const GetAllSalesPersons = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const adminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+    try {
+        // Get all SalesPersons that belong to this Admin's hierarchy (using adminId)
+        const allSalesPersons = yield SalesPerson_1.default.find({
+            adminId: adminId // Filter by adminId - much simpler and efficient!
+        })
+            .select("-token")
+            .populate("parentSalesPerson", "name email level")
+            .populate("createdBy", "name email")
+            .sort({ level: 1, createdAt: 1 });
         res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
             status: true,
-            data: salesPersons,
-            message: "SalesPersons retrieved successfully",
+            data: allSalesPersons,
+            message: `SalesPersons retrieved successfully (${allSalesPersons.length} total across all levels)`,
         });
-    })
-        .catch((error) => {
+    }
+    catch (error) {
         (0, ErrorHandler_1.dbError)(error, res);
-    });
-};
+    }
+});
 exports.GetAllSalesPersons = GetAllSalesPersons;
 // Retrieve a single SalesPerson by ID
 const GetSalesPersonById = (req, res) => {
+    var _a;
     const { id } = req.params;
-    SalesPerson_1.default.findById(id)
+    const adminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+    // Only get if this SalesPerson belongs to this Admin's hierarchy
+    SalesPerson_1.default.findOne({ _id: id, adminId: adminId })
+        .populate("parentSalesPerson", "name email level")
+        .populate("createdBy", "name email")
         .then((salesPerson) => {
         if (salesPerson) {
             res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
@@ -143,7 +158,7 @@ const GetSalesPersonById = (req, res) => {
         else {
             res.status(ResponseCode_1.ResponseCode.NOT_FOUND_ERROR).json({
                 status: false,
-                message: "SalesPerson not found",
+                message: "SalesPerson not found or you don't have permission",
             });
         }
     })
@@ -154,8 +169,11 @@ const GetSalesPersonById = (req, res) => {
 exports.GetSalesPersonById = GetSalesPersonById;
 // Delete a SalesPerson by ID
 const DeleteSalesPerson = (req, res) => {
+    var _a;
     const { id } = req.params;
-    SalesPerson_1.default.findByIdAndDelete(id)
+    const adminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+    // Only delete if this SalesPerson belongs to this Admin's hierarchy
+    SalesPerson_1.default.findOneAndDelete({ _id: id, adminId: adminId })
         .then((deletedSalesPerson) => {
         if (deletedSalesPerson) {
             res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
@@ -167,7 +185,7 @@ const DeleteSalesPerson = (req, res) => {
         else {
             res.status(ResponseCode_1.ResponseCode.NOT_FOUND_ERROR).json({
                 status: false,
-                message: "SalesPerson not found",
+                message: "SalesPerson not found or you don't have permission",
             });
         }
     })
@@ -176,3 +194,47 @@ const DeleteSalesPerson = (req, res) => {
     });
 };
 exports.DeleteSalesPerson = DeleteSalesPerson;
+// Admin: Get SalesPerson Hierarchy Tree
+const GetSalesPersonHierarchyTree = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const adminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+    try {
+        // Get all level 1 SalesPersons created by this Admin
+        const hierarchyTree = yield SalesPerson_1.default.aggregate([
+            {
+                $match: {
+                    adminId: adminId,
+                    level: 1
+                }
+            },
+            {
+                $graphLookup: {
+                    from: "salespersons",
+                    startWith: "$_id",
+                    connectFromField: "_id",
+                    connectToField: "parentSalesPerson",
+                    as: "descendants",
+                    maxDepth: 4, // Max depth is 4 (Level 1 → Level 5)
+                    depthField: "depth"
+                }
+            },
+            {
+                $project: {
+                    token: 0,
+                    password: 0,
+                    "descendants.token": 0,
+                    "descendants.password": 0
+                }
+            }
+        ]);
+        res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
+            status: true,
+            data: hierarchyTree,
+            message: "SalesPerson hierarchy tree retrieved successfully (Max 5 levels)"
+        });
+    }
+    catch (error) {
+        (0, ErrorHandler_1.dbError)(error, res);
+    }
+});
+exports.GetSalesPersonHierarchyTree = GetSalesPersonHierarchyTree;
