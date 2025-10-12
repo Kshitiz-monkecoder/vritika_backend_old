@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken"
 import { dbError } from "../../Lib/Utils/ErrorHandler"
 import { Res } from "../../Lib/DataTypes/Common"
 import { ResponseCode } from "../../Lib/Utils/ResponseCode"
+import passwordHash from "password-hash"
 
 const createToken = (data: Record<string, any>): string => {
 	return jwt.sign(data, process.env.JWT_SECRET ?? "")
@@ -32,12 +33,12 @@ const create = (
 				return
 			}
 
-			// Create new SuperAdmin
+			// Create new SuperAdmin with hashed password
 			const newSuperAdmin = new SuperAdminModel({
 				email,
-				password,
+				password: passwordHash.generate(password), // Hash the password
 				name,
-				userType: "superadmin"
+				userType: "SuperAdmin"
 			})
 
 			newSuperAdmin.save()

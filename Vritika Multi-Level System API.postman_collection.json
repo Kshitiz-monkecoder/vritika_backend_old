@@ -1,0 +1,1737 @@
+{
+	"info": {
+		"_postman_id": "b500e77b-3ba9-47b9-b5fb-09108b799cce",
+		"name": "Vritika Multi-Level System API",
+		"description": "Complete API collection for Multi-Level Role-Based System with SuperAdmin, Admin, and SalesPerson (Level 1-5)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29745045"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "SuperAdmin Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"superadmin@example.com\",\n    \"password\": \"SuperAdmin@123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/super-admin/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "super-admin", "login"]
+						},
+						"description": "SuperAdmin login endpoint"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@admin.com\",\n    \"password\": \"Admin@123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "login"]
+						},
+						"description": "Admin login endpoint"
+					},
+					"response": []
+				},
+				{
+					"name": "SalesPerson - Send OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phoneNumber\": \"916290118661\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/sales-person/send-otp",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "sales-person", "send-otp"]
+						},
+						"description": "Send OTP to SalesPerson mobile number"
+					},
+					"response": []
+				},
+				{
+					"name": "SalesPerson - Verify OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"phoneNumber\": \"916290118661\",\n    \"otp\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/sales-person/verify-otp",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "sales-person", "verify-otp"]
+						},
+						"description": "Verify OTP for SalesPerson"
+					},
+					"response": []
+				},
+				{
+					"name": "SalesPerson - Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Vritika Sharma\",\n    \"phoneNumber\": \"6290118661\",\n    \"email\": \"vritika@example.com\",\n    \"address\": \"123 Main Street, Mumbai, Maharashtra\",\n    \"selfie\": \"https://example.com/images/selfie.jpg\",\n    \"aadharCardNumber\": \"1234 5678 9101\",\n    \"aadharCardFront\": \"https://example.com/images/aadhar_front.jpg\",\n    \"aadharCardBack\": \"https://example.com/images/aadhar_back.jpg\",\n    \"panCardNumber\": \"ABCDE1234F\",\n    \"panCardFront\": \"https://example.com/images/pan_front.jpg\",\n    \"bankAccountNumber\": \"123456789012\",\n    \"bankIfscCode\": \"HDFC0001234\",\n    \"bankAccountName\": \"Vritika Sharma\",\n    \"cancelChequePhoto\": \"https://example.com/images/cheque.jpg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/sales-person/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "sales-person", "register"]
+						},
+						"description": "Register new SalesPerson"
+					},
+					"response": []
+				}
+			],
+			"description": "All authentication endpoints for SuperAdmin, Admin, and SalesPerson"
+		},
+		{
+			"name": "SuperAdmin",
+			"item": [
+				{
+					"name": "Admin Management",
+					"item": [
+						{
+							"name": "Create Admin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{super_admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"John Doe\",\n  \"phone\": \"1234567890\",\n  \"email\": \"admin@example.com\",\n  \"adminType\": \"Organisation\",\n  \"gstNo\": \"27AABCU9603R1ZM\",\n  \"contactPersonName\": \"Jane Doe\",\n  \"address\": \"123 Main Street, Springfield, USA\",\n  \"aadharCardNo\": \"1234-5678-9012\",\n  \"aadharCardImage\": [\n    \"https://example.com/aadhar_front.jpg\",\n    \"https://example.com/aadhar_back.jpg\"\n  ],\n  \"panCardNo\": \"ABCDE1234F\",\n  \"panCardImage\": [\n    \"https://example.com/pan_front.jpg\",\n    \"https://example.com/pan_back.jpg\"\n  ],\n  \"bankAccountNo\": \"123456789012\",\n  \"ifscCode\": \"SBIN0001234\",\n  \"bankHolderName\": \"John Doe\",\n  \"passbookImage\": \"https://example.com/passbook.jpg\",\n  \"password\": \"Admin@123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/super-admin/admins",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "super-admin", "admins"]
+								},
+								"description": "SuperAdmin creates a new Admin"
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Admins",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{super_admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/super-admin/admins",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "super-admin", "admins"]
+								},
+								"description": "Get all Admins created by this SuperAdmin"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Admin by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{super_admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/super-admin/admins/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "super-admin", "admins", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6704265f30aadb81a9c4e8fd"
+										}
+									]
+								},
+								"description": "Get specific Admin by ID"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Admin",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{super_admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Updated Admin Name\",\n  \"phone\": \"9876543210\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/super-admin/admins/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "super-admin", "admins", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6704265f30aadb81a9c4e8fd"
+										}
+									]
+								},
+								"description": "Update Admin details"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Admin",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{super_admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/super-admin/admins/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "super-admin", "admins", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6704265f30aadb81a9c4e8fd"
+										}
+									]
+								},
+								"description": "Delete Admin"
+							},
+							"response": []
+						}
+					],
+					"description": "SuperAdmin manages Admins"
+				}
+			],
+			"description": "All SuperAdmin endpoints for managing Admins"
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Brand Management",
+					"item": [
+						{
+							"name": "Create Brand",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"brandName\": \"Tata\",\n    \"brandDetails\": \"Premium solar brand\",\n    \"productCategory\": [\"modul\"],\n    \"quality\": \"High\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/brand",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "brand"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Brands",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/brand",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "brand"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Brand by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/brand/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "brand", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "67042778a7655f36d624883d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Brand",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"brandName\": \"Tata Updated\",\n    \"quality\": \"Premium\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/brand/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "brand", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6710bdc1015259bed17553c7"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Brand",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/brand/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "brand", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "67042778a7655f36d624883d"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Product Management",
+					"item": [
+						{
+							"name": "Create Product",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"image\": \"https://example.com/images/sunpower-maxeon-6.jpg\",\n    \"productName\": \"SunPower Maxeon 6\",\n    \"type\": \"Monocrystalline\",\n    \"spvBrand\": \"67042778a7655f36d624883d\",\n    \"spvType\": \"High Efficiency\",\n    \"phase\": \"Grid-Tied\",\n    \"capacity\": \"400\",\n    \"spvCapacity\": \"440\",\n    \"price\": 199.99,\n    \"service\": \"25-Year Warranty\",\n    \"thickness\": \"40mm\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/product",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "product"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Products",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/product",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "product"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Product by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/product/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "product", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "67042778a7655f36d624883d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Product",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type\": \"Monocrystalline\",\n    \"price\": 249.99\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/product/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "product", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "670429a0d24d34ec71fd3e52"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Product",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/product/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "product", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "670429a0d24d34ec71fd3e52"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "SalesPerson Management (Level 1-5)",
+					"item": [
+						{
+							"name": "Create Level 1 SalesPerson",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Alice Johnson\",\n  \"phoneNumber\": \"9876543210\",\n  \"email\": \"alice@example.com\",\n  \"address\": \"123 Main Street, Mumbai\",\n  \"selfie\": \"https://example.com/images/alice_selfie.jpg\",\n  \"aadharCardNumber\": \"1234-5678-9012\",\n  \"aadharCardFront\": \"https://example.com/images/aadhar_front.jpg\",\n  \"aadharCardBack\": \"https://example.com/images/aadhar_back.jpg\",\n  \"panCardNumber\": \"ABCDE1234F\",\n  \"panCardFront\": \"https://example.com/images/pan_front.jpg\",\n  \"bankAccountNumber\": \"123456789012\",\n  \"bankIfscCode\": \"SBIN0001234\",\n  \"bankAccountName\": \"Alice Johnson\",\n  \"cancelChequePhoto\": \"https://example.com/images/cancel_cheque.jpg\",\n  \"status\": \"Active\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/sales-persons",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "sales-persons"]
+								},
+								"description": "Admin creates Level 1 SalesPerson. Level and adminId are set automatically."
+							},
+							"response": []
+						},
+						{
+							"name": "Get All SalesPersons (All Levels)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/sales-persons",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "sales-persons"]
+								},
+								"description": "Get all SalesPersons (Level 1-5) in this Admin's hierarchy"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Hierarchy Tree",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/sales-persons/hierarchy-tree",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "sales-persons", "hierarchy-tree"]
+								},
+								"description": "Get complete hierarchy tree with all levels and descendants"
+							},
+							"response": []
+						},
+						{
+							"name": "Get SalesPerson by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/sales-persons/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "sales-persons", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6712cb8cf6dc8413a2dcfd77"
+										}
+									]
+								},
+								"description": "Get specific SalesPerson with parent and creator info"
+							},
+							"response": []
+						},
+						{
+							"name": "Update SalesPerson",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Alice Johnson Updated\",\n  \"status\": \"Active\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/sales-persons/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "sales-persons", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6712cb8cf6dc8413a2dcfd77"
+										}
+									]
+								},
+								"description": "Update SalesPerson details"
+							},
+							"response": []
+						},
+						{
+							"name": "Delete SalesPerson",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/sales-persons/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "sales-persons", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6712cb8cf6dc8413a2dcfd77"
+										}
+									]
+								},
+								"description": "Delete SalesPerson from hierarchy"
+							},
+							"response": []
+						}
+					],
+					"description": "Admin manages SalesPersons (Level 1-5). Max level is 5."
+				},
+				{
+					"name": "Dashboard",
+					"item": [
+						{
+							"name": "Get All Admins Summary",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/dashboad",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "dashboad"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get SalesPersons by Admin",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/dashboad-admin/:adminId",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "dashboad-admin", ":adminId"],
+									"variable": [
+										{
+											"key": "adminId",
+											"value": "6713b8726a1cabcec57fa633"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Customers by SalesPerson",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/dashboad-sales-persons/:salesPersonId",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "dashboad-sales-persons", ":salesPersonId"],
+									"variable": [
+										{
+											"key": "salesPersonId",
+											"value": "67195ed2942f5a7ca468841c"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Role Commission",
+					"item": [
+						{
+							"name": "Create Role Commission",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"level\": 1,\n    \"commissionPercentage\": 5.5,\n    \"description\": \"Level 1 commission\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/role-commission",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "role-commission"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Role Commissions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/role-commission",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "role-commission"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Role Commission by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/role-commission/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "role-commission", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Role Commission",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"commissionPercentage\": 6.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/role-commission/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "role-commission", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Role Commission",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{admin_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/admin/role-commission/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "admin", "role-commission", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "All Admin endpoints for managing products, brands, and SalesPersons"
+		},
+		{
+			"name": "SalesPerson",
+			"item": [
+				{
+					"name": "Profile Management",
+					"item": [
+						{
+							"name": "Get My Profile",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/profile",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "profile"]
+								},
+								"description": "Get current SalesPerson profile with level info"
+							},
+							"response": []
+						},
+						{
+							"name": "Update My Profile",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"address\": \"New Address, Mumbai\",\n    \"bankAccountNumber\": \"987654321012\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/profile",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "profile"]
+								},
+								"description": "Update own profile"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Sub-SalesPerson Management (Multi-Level)",
+					"item": [
+						{
+							"name": "Create Sub-SalesPerson",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Bob Smith\",\n  \"phoneNumber\": \"9876543211\",\n  \"email\": \"bob@example.com\",\n  \"address\": \"456 Street, Delhi\",\n  \"selfie\": \"https://example.com/images/bob_selfie.jpg\",\n  \"aadharCardNumber\": \"2345-6789-0123\",\n  \"aadharCardFront\": \"https://example.com/images/aadhar_front.jpg\",\n  \"aadharCardBack\": \"https://example.com/images/aadhar_back.jpg\",\n  \"panCardNumber\": \"BCDEF2345G\",\n  \"panCardFront\": \"https://example.com/images/pan_front.jpg\",\n  \"bankAccountNumber\": \"234567890123\",\n  \"bankIfscCode\": \"HDFC0002345\",\n  \"bankAccountName\": \"Bob Smith\",\n  \"cancelChequePhoto\": \"https://example.com/images/cancel_cheque.jpg\",\n  \"status\": \"Active\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/sub-salesperson",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "sub-salesperson"]
+								},
+								"description": "Create sub-SalesPerson (level + 1). Blocked if current level is 5."
+							},
+							"response": []
+						},
+						{
+							"name": "Get My Sub-SalesPersons",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/sub-salesperson",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "sub-salesperson"]
+								},
+								"description": "Get direct children (sub-SalesPersons created by me)"
+							},
+							"response": []
+						},
+						{
+							"name": "Get My Hierarchy (Downline)",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/hierarchy",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "hierarchy"]
+								},
+								"description": "Get entire downline hierarchy tree"
+							},
+							"response": []
+						}
+					],
+					"description": "Multi-level SalesPerson creation (Level 1-4 can create, Level 5 cannot)"
+				},
+				{
+					"name": "Customer Management",
+					"item": [
+						{
+							"name": "Resources",
+							"item": [
+								{
+									"name": "Get Customer Groups",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{sales_person_token}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{base_url}}/api/v1/sales-person/customer-group",
+											"host": ["{{base_url}}"],
+											"path": ["api", "v1", "sales-person", "customer-group"]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Customer Sub-Groups",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{sales_person_token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"group_id\": \"64b1a7c2f1e73c001234abcd\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/sales-person/customer-subgroup",
+											"host": ["{{base_url}}"],
+											"path": ["api", "v1", "sales-person", "customer-subgroup"]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get Customer Segments",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "{{sales_person_token}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"sub_group_id\": \"64b1a7c2f1e73c001234abd4\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/sales-person/customer-segment",
+											"host": ["{{base_url}}"],
+											"path": ["api", "v1", "sales-person", "customer-segment"]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Create Customer",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"leadId\": \"LEAD001\",\n    \"customerPhoneNo\": \"123-456-7890\",\n    \"customerGroup\": \"Retail\",\n    \"customerSubGroup\": \"Online\",\n    \"segment\": \"E-commerce\",\n    \"proposalDate\": \"2024-10-01\",\n    \"proposal\": \"Premium Membership Proposal\",\n    \"title\": \"Mr.\",\n    \"customerContactName\": \"John Doe\",\n    \"emailId\": \"john.doe@example.com\",\n    \"customerAddress\": \"123 Elm St, Springfield, IL\",\n    \"state\": \"Illinois\",\n    \"district\": \"Sangamon\",\n    \"pinCode\": \"62701\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/customers",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "customers"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Customers",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/customers",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "customers"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Customer by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/customers/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "customers", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6719648c147e53343a8eda14"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Customer",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customerContactName\": \"John Doe Updated\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/customers/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "customers", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6719648c147e53343a8eda14"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Customer",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/customers/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "customers", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6719648c147e53343a8eda14"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verify Customer (OTP)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"phoneNumber\": \"916290118661\",\n    \"otp\": \"345622\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/customer-verify",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "customer-verify"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Site Survey",
+					"item": [
+						{
+							"name": "Create Site Survey",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"length\": 20,\n    \"width\": 15,\n    \"images\": [\n        \"https://example.com/roof1.jpg\",\n        \"https://example.com/roof2.jpg\"\n    ],\n    \"obstacleCheck\": true,\n    \"shadowAnalysis\": false,\n    \"roofSurfaceType\": \"Concrete\",\n    \"totalRoofs\": 2,\n    \"roofAccessibility\": \"Accessible\",\n    \"sensationLoadKW\": 5.5,\n    \"solarCapacity\": 10.0,\n    \"electricityBillImages\": [\n        \"https://example.com/bill1.jpg\"\n    ],\n    \"gensatAvailable\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/site-survey",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "site-survey"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Site Surveys",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/site-survey",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "site-survey"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Site Survey by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/site-survey/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "site-survey", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "671a65ff0581e569ce0185fd"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Site Survey",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"solarCapacity\": 12.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/site-survey/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "site-survey", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "671a65ff0581e569ce0185fd"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Site Survey",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/site-survey/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "site-survey", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "671a65ff0581e569ce0185fd"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Quotation",
+					"item": [
+						{
+							"name": "Get Products List",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/products",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "products"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Products by Type",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type\": \"kit\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/quotation-product",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "quotation-product"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Solar Modules",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/quotation-solar-module",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "quotation-solar-module"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Quotation",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"customerId\": \"customer123\",\n    \"products\": [\n        {\n            \"productId\": \"prod001\",\n            \"quantity\": 10\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/quotation",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "quotation"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Send Quotation",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/quotation-send/:id",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "quotation-send", ":id"],
+									"variable": [
+										{
+											"key": "id",
+											"value": "6794e430c8ee5ab874cde908"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Analytics & Reports",
+					"item": [
+						{
+							"name": "Get Quotation Summary",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/quotation-summary?filter=week",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "quotation-summary"],
+									"query": [
+										{
+											"key": "filter",
+											"value": "today",
+											"disabled": true
+										},
+										{
+											"key": "filter",
+											"value": "week"
+										},
+										{
+											"key": "filter",
+											"value": "month",
+											"disabled": true
+										}
+									]
+								},
+								"description": "Get quotation summary stats"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Quotation Chart Data",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{sales_person_token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/v1/sales-person/quotation-chart?filter=month",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "sales-person", "quotation-chart"],
+									"query": [
+										{
+											"key": "filter",
+											"value": "today",
+											"disabled": true
+										},
+										{
+											"key": "filter",
+											"value": "week",
+											"disabled": true
+										},
+										{
+											"key": "filter",
+											"value": "month"
+										}
+									]
+								},
+								"description": "Get chart data for quotations"
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "All SalesPerson endpoints including multi-level features"
+		},
+		{
+			"name": "Common",
+			"item": [
+				{
+					"name": "File Upload",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/upload/:location",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "upload", ":location"],
+							"variable": [
+								{
+									"key": "location",
+									"value": "product",
+									"description": "Upload location: product, brand, profile, etc."
+								}
+							]
+						},
+						"description": "Upload files to specified location"
+					},
+					"response": []
+				},
+				{
+					"name": "Get States",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{admin_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/:userType/states",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", ":userType", "states"],
+							"variable": [
+								{
+									"key": "userType",
+									"value": "admin"
+								}
+							]
+						},
+						"description": "Get list of states"
+					},
+					"response": []
+				}
+			],
+			"description": "Common endpoints for file uploads and resources"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "super_admin_token",
+			"value": "your_super_admin_token_here",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "your_admin_token_here",
+			"type": "string"
+		},
+		{
+			"key": "sales_person_token",
+			"value": "your_sales_person_token_here",
+			"type": "string"
+		}
+	]
+}
