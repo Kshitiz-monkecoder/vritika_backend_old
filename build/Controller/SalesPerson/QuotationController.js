@@ -26,7 +26,7 @@ const GetQuotationBand = (_req, res) => {
         res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
             status: true,
             data: brands,
-            message: 'Brands retrieved successfully'
+            message: "Brands retrieved successfully",
         });
     })
         .catch((error) => {
@@ -38,34 +38,34 @@ const GetQuotationSolarModule = (_req, res) => {
     Product_1.default.aggregate([
         {
             $match: {
-                type: 'Solar Module'
-            }
+                type: "Solar Module",
+            },
         },
         {
-            $match: Object.assign({}, _req.body)
+            $match: Object.assign({}, _req.body),
         },
         {
             $lookup: {
-                from: 'brands',
-                foreignField: '_id',
-                localField: 'spvBrand',
-                as: 'brands'
-            }
+                from: "brands",
+                foreignField: "_id",
+                localField: "spvBrand",
+                as: "brands",
+            },
         },
         {
-            $unwind: '$brands'
+            $unwind: "$brands",
         },
         {
             $project: {
-                __v: 0
-            }
-        }
+                __v: 0,
+            },
+        },
     ])
         .then((brands) => {
         res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
             status: true,
             data: brands,
-            message: 'Product retrieved successfully'
+            message: "Product retrieved successfully",
         });
     })
         .catch((error) => {
@@ -77,59 +77,59 @@ const GetProductSectionList = (_req, res) => {
     Product_1.default.aggregate([
         {
             $match: {
-                type: { $nin: ['kit', 'BOS'] }
-            }
+                type: { $nin: ["kit", "BOS"] },
+            },
         },
         {
             $group: {
-                _id: '$type' // Field for distinct values
-            }
+                _id: "$type", // Field for distinct values
+            },
         },
         {
             $addFields: {
-                type: '$_id'
-            }
+                type: "$_id",
+            },
         },
         {
             $sort: {
-                type: 1
-            }
+                type: 1,
+            },
         },
         {
             $lookup: {
-                from: 'products',
-                foreignField: 'type',
-                localField: '_id',
-                as: 'products',
+                from: "products",
+                foreignField: "type",
+                localField: "_id",
+                as: "products",
                 pipeline: [
                     {
                         $addFields: {
-                            selected: false
-                        }
+                            selected: false,
+                        },
                     },
                     {
                         $lookup: {
-                            from: 'brands',
-                            foreignField: '_id',
-                            localField: 'spvBrand',
-                            as: 'brands'
-                        }
+                            from: "brands",
+                            foreignField: "_id",
+                            localField: "spvBrand",
+                            as: "brands",
+                        },
                     },
                     {
                         $unwind: {
                             preserveNullAndEmptyArrays: true,
-                            path: '$brands'
-                        }
-                    }
-                ]
-            }
-        }
+                            path: "$brands",
+                        },
+                    },
+                ],
+            },
+        },
     ])
         .then((brands) => {
         res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
             status: true,
             data: brands,
-            message: 'Product retrieved successfully'
+            message: "Product retrieved successfully",
         });
     })
         .catch((error) => {
@@ -142,19 +142,19 @@ exports.GetInverter = GetInverter;
 const GetQuotationProduct = (_req, res) => {
     Product_1.default.aggregate([
         {
-            $match: Object.assign({}, _req.body)
+            $match: Object.assign({}, _req.body),
         },
         {
             $project: {
-                __v: 0
-            }
-        }
+                __v: 0,
+            },
+        },
     ])
         .then((brands) => {
         res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
             status: true,
             data: brands,
-            message: 'Product retrieved successfully'
+            message: "Product retrieved successfully",
         });
     })
         .catch((error) => {
@@ -164,8 +164,8 @@ const GetQuotationProduct = (_req, res) => {
 exports.GetQuotationProduct = GetQuotationProduct;
 const CreateQuotation = (req, res) => {
     (0, ErrorHandler_1.InputValidator)(req.body, {
-        customerId: 'required|string',
-        data: 'required|array'
+        customerId: "required|string",
+        data: "required|array",
     })
         .then(() => {
         var _a;
@@ -173,20 +173,21 @@ const CreateQuotation = (req, res) => {
         Quotation_1.default.findOne({
             salesPersonId: (_a = req.User) === null || _a === void 0 ? void 0 : _a._id,
             customerId: req.body.customerId,
-            SiteSurveyId: req.body.SiteSurveyId
+            SiteSurveyId: req.body.SiteSurveyId,
         })
             .then((data) => {
             var _a;
             if (data) {
-                data.updateOne({
+                data
+                    .updateOne({
                     $set: Object.assign({}, req.body),
-                    new: true
+                    new: true,
                 })
                     .then(() => {
                     res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
                         status: true,
                         data: data,
-                        message: 'Quotation Create successfully'
+                        message: "Quotation Create successfully",
                     });
                 })
                     .catch((error) => {
@@ -201,7 +202,7 @@ const CreateQuotation = (req, res) => {
                     res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
                         status: true,
                         data: savedQuotation,
-                        message: 'Quotation Create successfully'
+                        message: "Quotation Create successfully",
                     });
                 })
                     .catch((error) => {
@@ -223,80 +224,81 @@ const SendQuotation = (req, res) => {
     console.log((_a = req.User) === null || _a === void 0 ? void 0 : _a._id);
     Quotation_1.default.findOne({
         // salesPersonId: new mongoose.Types.ObjectId(req.User?._id || ''),
-        _id: new mongoose_1.default.Types.ObjectId(req.params.id)
+        _id: new mongoose_1.default.Types.ObjectId(req.params.id),
     })
-        .populate('customerId')
+        .populate("customerId")
         .then((data) => {
         var _a;
         if (data && data.SiteSurveyId) {
             const pdfUrl = `https://api.vritika.co/api/v1/sales-person/quotation-pdf/${data.SiteSurveyId}`;
             axios_1.default
                 .request({
-                method: 'POST',
-                url: 'https://services.kit19.com/IMS/Whatsapp/Template',
-                headers: { 'Content-Type': 'application/JSON' },
+                method: "POST",
+                url: "https://services.kit19.com/IMS/Whatsapp/Template",
+                headers: { "Content-Type": "application/JSON" },
                 data: JSON.stringify({
-                    key: '2B09C330FE0F4EC9B725CE0C5B0B6ADA',
-                    username: 'divypower106334',
-                    name: 'whatsapp',
-                    remarks: 'Hello Kit19 IT Support,\n\nThank you for choosing Divy Power! 😊\nPlease find attached your solar rooftop system quotation based on the site survey and details provided.',
+                    key: "2B09C330FE0F4EC9B725CE0C5B0B6ADA",
+                    username: "divypower106334",
+                    name: "whatsapp",
+                    remarks: "Hello Kit19 IT Support,\n\nThank you for choosing Divy Power! 😊\nPlease find attached your solar rooftop system quotation based on the site survey and details provided.",
                     whatsapp: {
                         to: `91${data.customerId.customerPhoneNo}`,
-                        type: 'template',
-                        category: 'MARKETING',
-                        recipient_type: 'individual',
+                        type: "template",
+                        category: "UTILITY",
+                        recipient_type: "individual",
                         template: {
-                            namespace: '',
+                            namespace: "",
                             language: {
-                                policy: 'deterministic',
-                                code: 'en'
+                                policy: "deterministic",
+                                code: "en",
                             },
-                            name: 'api_testing',
+                            name: "test_api1",
                             components: [
                                 {
-                                    type: 'header',
+                                    type: "header",
                                     parameters: [
                                         {
-                                            type: 'document',
+                                            type: "document",
                                             document: {
                                                 link: pdfUrl,
-                                                filename: 'CRM.pdf'
-                                            }
-                                        }
-                                    ]
+                                                filename: "CRM.pdf",
+                                            },
+                                            mediaId: "",
+                                        },
+                                    ],
                                 },
                                 {
-                                    type: 'body',
+                                    type: "body",
                                     parameters: [
                                         {
-                                            type: 'text',
-                                            text: (_a = data === null || data === void 0 ? void 0 : data.customerId) === null || _a === void 0 ? void 0 : _a.customerContactName
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    }
-                })
+                                            type: "text",
+                                            text: (_a = data === null || data === void 0 ? void 0 : data.customerId) === null || _a === void 0 ? void 0 : _a.customerContactName,
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                }),
             })
                 .then(() => __awaiter(void 0, void 0, void 0, function* () {
                 res.status(ResponseCode_1.ResponseCode.SUCCESS).send({
                     status: true,
-                    message: 'Successful quotation send via whatsapp'
+                    message: "Successful quotation send via whatsapp",
                 });
             }))
                 .catch((error) => {
-                console.error('Error sending quotation via WhatsApp:', error);
+                console.error("Error sending quotation via WhatsApp:", error);
                 res.status(ResponseCode_1.ResponseCode.BAD_REQUEST).json({
                     status: false,
-                    message: 'Failed to send quotation via WhatsApp'
+                    message: "Failed to send quotation via WhatsApp",
                 });
             });
         }
         else {
             res.status(ResponseCode_1.ResponseCode.NOT_FOUND_ERROR).json({
                 status: false,
-                message: 'No Quotation found'
+                message: "No Quotation found",
             });
         }
     })

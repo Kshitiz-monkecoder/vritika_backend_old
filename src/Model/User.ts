@@ -43,7 +43,9 @@ const UserSchema = new Schema<UserModelType<CommonModelType & Document>>(
         "https://e7.pngegg.com/pngimages/867/694/png-clipart-user-profile-default-computer-icons-network-video-recorder-avatar-cartoon-maker-blue-text.png"
 		},
 		token: { type: String },
-		passbookImage: { type: String }
+		passbookImage: { type: String },
+		createdBy: { type: Schema.Types.ObjectId, ref: "SuperAdmin" }, // Reference to SuperAdmin
+		isDeleted: { type: Boolean, default: false }
 	},
 	{ timestamps: true }
 )

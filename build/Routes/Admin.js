@@ -29,6 +29,7 @@ AdminRouter.delete("/users/:id", UserController_1.DeleteUser);
 AdminRouter.post("/sales-persons", SalesPersonController_1.AddSalesPerson);
 AdminRouter.put("/sales-persons/:id", SalesPersonController_1.UpdateSalesPerson);
 AdminRouter.get("/sales-persons", SalesPersonController_1.GetAllSalesPersons);
+AdminRouter.get("/sales-persons/hierarchy-tree", SalesPersonController_1.GetSalesPersonHierarchyTree); // Get hierarchy tree
 AdminRouter.get("/sales-persons/:id", SalesPersonController_1.GetSalesPersonById);
 AdminRouter.delete("/sales-persons/:id", SalesPersonController_1.DeleteSalesPerson);
 AdminRouter.post("/role-commission", RoleCommissionController_1.AddRoleCommission);

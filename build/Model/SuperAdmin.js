@@ -38,38 +38,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const password_hash_1 = __importDefault(require("password-hash"));
-const UserSchema = new mongoose_1.Schema({
+const SuperAdminSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true
     },
     userType: {
         type: String,
-        default: "Admin"
+        default: "SuperAdmin"
     },
     phone: {
         type: String
     },
     email: {
         type: String,
-        required: true
-    },
-    adminType: {
-        type: String,
         required: true,
-        enum: ["Organisation", "Individual"]
+        unique: true
     },
-    gstNo: { type: String },
-    contactPersonName: { type: String },
-    address: { type: String, required: true },
-    aadharCardNo: { type: String, required: true },
-    aadharCardImage: { type: [String], required: true },
-    panCardNo: { type: String, required: true },
-    panCardImage: { type: [String], required: true },
-    bankAccountNo: { type: String, required: true },
-    ifscCode: { type: String, required: true },
-    bankHolderName: { type: String, required: true },
-    code: { type: String },
     password: { type: String },
     image: {
         type: String,
@@ -77,11 +62,10 @@ const UserSchema = new mongoose_1.Schema({
     },
     token: { type: String },
     passbookImage: { type: String },
-    createdBy: { type: mongoose_1.Schema.Types.ObjectId, ref: "SuperAdmin" }, // Reference to SuperAdmin
     isDeleted: { type: Boolean, default: false }
 }, { timestamps: true });
-UserSchema.methods.comparePassword = function (candidatePassword) {
+SuperAdminSchema.methods.comparePassword = function (candidatePassword) {
     return password_hash_1.default.verify(candidatePassword, this.password);
 };
-const UserModel = mongoose_1.default.model("User", UserSchema);
-exports.default = UserModel;
+const SuperAdminModel = mongoose_1.default.model("SuperAdmin", SuperAdminSchema);
+exports.default = SuperAdminModel;

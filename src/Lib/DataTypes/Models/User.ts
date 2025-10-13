@@ -1,3 +1,5 @@
+import mongoose from "mongoose"
+
 export type CommonModelType = {
     isDeleted?: boolean
 }
@@ -28,4 +30,5 @@ export type UserModelType<T> = T & {
     passbookImage: string
 
     code: string
+    createdBy?: mongoose.Types.ObjectId // Reference to SuperAdmin who created this Admin
 }

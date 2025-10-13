@@ -61,7 +61,12 @@ const SalesPersonSchema = new mongoose_1.Schema({
         enum: ["Inactive", "Active", "Pending"],
         default: "Pending"
     },
-    token: { type: String }
+    token: { type: String },
+    createdBy: { type: mongoose_1.Schema.Types.ObjectId, refPath: "createdByType" }, // Dynamic reference to Admin or SalesPerson
+    createdByType: { type: String, enum: ["User", "SalesPerson"], default: "User" }, // Type of creator
+    level: { type: Number, default: 1, min: 1, max: 5 }, // Level in hierarchy (1-5, max is 5)
+    parentSalesPerson: { type: mongoose_1.Schema.Types.ObjectId, ref: "SalesPerson" }, // Reference to parent SalesPerson
+    adminId: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true } // Admin who owns this hierarchy
 }, { timestamps: true });
 SalesPersonSchema.methods.comparePassword = function (candidatePassword) {
     return password_hash_1.default.verify(candidatePassword, this.password);

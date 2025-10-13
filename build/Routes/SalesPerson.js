@@ -8,6 +8,10 @@ const SalesPerson_1 = require("../Controller/SalesPerson");
 const SalesPersonRoute = (0, express_1.Router)();
 SalesPersonRoute.get("/profile", SalesPerson_1.GetSalesPersonProfile); // Get sales person profile
 SalesPersonRoute.put("/profile", SalesPerson_1.UpdateSalesPersonProfile); // Update sales person profile
+// Sub-SalesPerson Management (Multi-level)
+SalesPersonRoute.post("/sub-salesperson", SalesPerson_1.CreateSubSalesPerson); // Create a sub-SalesPerson with incremented level
+SalesPersonRoute.get("/sub-salesperson", SalesPerson_1.GetMySubSalesPersons); // Get all sub-SalesPersons created by this SalesPerson
+SalesPersonRoute.get("/hierarchy", SalesPerson_1.GetSalesPersonHierarchy); // Get entire hierarchy tree
 SalesPersonRoute.post("/customers", CustomerController_1.CreateCustomer); // Create a new customer
 SalesPersonRoute.post("/customer-verify", CustomerController_1.CustomerVerifyOtp);
 SalesPersonRoute.put("/customers/:id", CustomerController_1.UpdateCustomer); // Update an existing customer

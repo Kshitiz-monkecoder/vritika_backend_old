@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.middleware = exports.CreateToken = void 0;
+exports.isAdmin = exports.isSuperAdmin = exports.middleware = exports.CreateToken = void 0;
 exports.GenerateOTP = GenerateOTP;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const ResponseCode_1 = require("./ResponseCode");
@@ -44,6 +44,11 @@ const middleware = (req, res, next) => {
                 _id: decrypted._id,
                 email: decrypted.email
             };
+            req.user = {
+                _id: decrypted._id,
+                email: decrypted.email,
+                type: decrypted.type
+            };
             next();
         }
         catch (error) {
@@ -55,3 +60,30 @@ const middleware = (req, res, next) => {
     }
 };
 exports.middleware = middleware;
+// Role-based middleware
+const isSuperAdmin = (req, res, next) => {
+    const user = req.user;
+    if (user && user.type === "SuperAdmin") {
+        next();
+    }
+    else {
+        res.status(ResponseCode_1.ResponseCode.AUTH_ERROR).json({
+            status: false,
+            message: "Access denied. SuperAdmin only."
+        });
+    }
+};
+exports.isSuperAdmin = isSuperAdmin;
+const isAdmin = (req, res, next) => {
+    const user = req.user;
+    if (user && (user.type === "Admin" || user.type === "SuperAdmin")) {
+        next();
+    }
+    else {
+        res.status(ResponseCode_1.ResponseCode.AUTH_ERROR).json({
+            status: false,
+            message: "Access denied. Admin only."
+        });
+    }
+};
+exports.isAdmin = isAdmin;

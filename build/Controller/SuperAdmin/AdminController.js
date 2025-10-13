@@ -12,14 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeleteUser = exports.GetUserById = exports.GetAllUsers = exports.UpdateUser = exports.AddUser = void 0;
+exports.DeleteAdmin = exports.GetAdminById = exports.GetAllAdmins = exports.UpdateAdmin = exports.AddAdmin = void 0;
 const User_1 = __importDefault(require("../../Model/User"));
-const ResponseCode_1 = require("../../Lib/Utils/ResponseCode"); // Adjust the path according to your structure
+const ResponseCode_1 = require("../../Lib/Utils/ResponseCode");
 const ErrorHandler_1 = require("../../Lib/Utils/ErrorHandler");
 const password_hash_1 = __importDefault(require("password-hash"));
 const ReferralCode_1 = require("../../Lib/Utils/ReferralCode");
-// Add a new user
-const AddUser = (req, res) => {
+// SuperAdmin: Add a new Admin
+const AddAdmin = (req, res) => {
     (0, ErrorHandler_1.InputValidator)(req.body, {
         name: "required|string",
         email: "required|email",
@@ -28,19 +28,20 @@ const AddUser = (req, res) => {
         .then(() => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         const code = yield (0, ReferralCode_1.GenerateUniqueReferralCode)(8);
-        // Get SuperAdmin ID from authenticated user (if creating from SuperAdmin context)
-        const createdById = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
-        const newUser = new User_1.default(Object.assign(Object.assign({}, req.body), { code, createdBy: createdById // Reference to creator
+        // Get SuperAdmin ID from authenticated user (from middleware)
+        const superAdminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        const newAdmin = new User_1.default(Object.assign(Object.assign({}, req.body), { code, userType: "Admin", createdBy: superAdminId // Reference to SuperAdmin
          }));
-        if (req.body.password)
-            newUser.password = password_hash_1.default.generate(req.body.password);
-        newUser
+        if (req.body.password) {
+            newAdmin.password = password_hash_1.default.generate(req.body.password);
+        }
+        newAdmin
             .save()
-            .then((user) => {
+            .then((admin) => {
             res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
                 status: true,
-                data: user,
-                message: "User created successfully"
+                data: admin,
+                message: "Admin created successfully"
             });
         })
             .catch((error) => {
@@ -55,36 +56,38 @@ const AddUser = (req, res) => {
         });
     });
 };
-exports.AddUser = AddUser;
-// Update an existing user by ID
-const UpdateUser = (req, res) => {
+exports.AddAdmin = AddAdmin;
+// SuperAdmin: Update an Admin by ID
+const UpdateAdmin = (req, res) => {
     const { id } = req.params;
     (0, ErrorHandler_1.InputValidator)(req.body, {
-        firstName: "string",
-        lastName: "string",
-        type: "string",
+        name: "string",
         email: "email",
-        password: "string"
+        phone: "string"
     })
         .then(() => {
+        var _a;
         const updatedData = Object.assign({}, req.body);
         // Only hash the password if it's being updated
         if (updatedData.password) {
             updatedData.password = password_hash_1.default.generate(updatedData.password);
         }
-        User_1.default.findByIdAndUpdate(id, updatedData, { new: true })
-            .then((user) => {
-            if (user) {
+        // Get SuperAdmin ID from authenticated user
+        const superAdminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+        // Only update if this admin was created by this SuperAdmin
+        User_1.default.findOneAndUpdate({ _id: id, createdBy: superAdminId }, updatedData, { new: true })
+            .then((admin) => {
+            if (admin) {
                 res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
                     status: true,
-                    data: user,
-                    message: "User updated successfully"
+                    data: admin,
+                    message: "Admin updated successfully"
                 });
             }
             else {
-                res.status(ResponseCode_1.ResponseCode.VALIDATION_ERROR).json({
+                res.status(ResponseCode_1.ResponseCode.NOT_FOUND_ERROR).json({
                     status: false,
-                    message: "User not found"
+                    message: "Admin not found or you don't have permission to update this admin"
                 });
             }
         })
@@ -99,38 +102,47 @@ const UpdateUser = (req, res) => {
         });
     });
 };
-exports.UpdateUser = UpdateUser;
-// Retrieve all users
-const GetAllUsers = (_req, res) => {
-    User_1.default.find({ userType: "Admin" })
-        .then((users) => {
+exports.UpdateAdmin = UpdateAdmin;
+// SuperAdmin: Get all Admins created by this SuperAdmin
+const GetAllAdmins = (req, res) => {
+    var _a;
+    // Get SuperAdmin ID from authenticated user
+    const superAdminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+    User_1.default.find({ userType: "Admin", createdBy: superAdminId })
+        .select("-password -token")
+        .populate("createdBy", "name email")
+        .then((admins) => {
         res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
             status: true,
-            data: users,
-            message: "Users retrieved successfully"
+            data: admins,
+            message: "Admins retrieved successfully"
         });
     })
         .catch((error) => {
         (0, ErrorHandler_1.dbError)(error, res);
     });
 };
-exports.GetAllUsers = GetAllUsers;
-// Retrieve a single user by ID
-const GetUserById = (req, res) => {
+exports.GetAllAdmins = GetAllAdmins;
+// SuperAdmin: Get a single Admin by ID
+const GetAdminById = (req, res) => {
+    var _a;
     const { id } = req.params;
-    User_1.default.findById(id)
-        .then((user) => {
-        if (user) {
+    const superAdminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+    User_1.default.findOne({ _id: id, createdBy: superAdminId })
+        .select("-password -token")
+        .populate("createdBy", "name email")
+        .then((admin) => {
+        if (admin) {
             res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
                 status: true,
-                data: user,
-                message: "User retrieved successfully"
+                data: admin,
+                message: "Admin retrieved successfully"
             });
         }
         else {
-            res.status(ResponseCode_1.ResponseCode.VALIDATION_ERROR).json({
+            res.status(ResponseCode_1.ResponseCode.NOT_FOUND_ERROR).json({
                 status: false,
-                message: "User not found"
+                message: "Admin not found or you don't have permission"
             });
         }
     })
@@ -138,23 +150,25 @@ const GetUserById = (req, res) => {
         (0, ErrorHandler_1.dbError)(error, res);
     });
 };
-exports.GetUserById = GetUserById;
-// Delete a user by ID
-const DeleteUser = (req, res) => {
+exports.GetAdminById = GetAdminById;
+// SuperAdmin: Delete an Admin by ID
+const DeleteAdmin = (req, res) => {
+    var _a;
     const { id } = req.params;
-    User_1.default.findByIdAndDelete(id)
-        .then((deletedUser) => {
-        if (deletedUser) {
+    const superAdminId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
+    User_1.default.findOneAndDelete({ _id: id, createdBy: superAdminId })
+        .then((deletedAdmin) => {
+        if (deletedAdmin) {
             res.status(ResponseCode_1.ResponseCode.SUCCESS).json({
                 status: true,
-                data: deletedUser,
-                message: "User deleted successfully"
+                data: deletedAdmin,
+                message: "Admin deleted successfully"
             });
         }
         else {
-            res.status(ResponseCode_1.ResponseCode.VALIDATION_ERROR).json({
+            res.status(ResponseCode_1.ResponseCode.NOT_FOUND_ERROR).json({
                 status: false,
-                message: "User not found"
+                message: "Admin not found or you don't have permission"
             });
         }
     })
@@ -162,4 +176,4 @@ const DeleteUser = (req, res) => {
         (0, ErrorHandler_1.dbError)(error, res);
     });
 };
-exports.DeleteUser = DeleteUser;
+exports.DeleteAdmin = DeleteAdmin;

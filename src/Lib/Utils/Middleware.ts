@@ -48,6 +48,13 @@ export const middleware = (
 				_id: decrypted._id,
 				email: decrypted.email
 			}
+			
+			// Attach user info to request for role-based access
+			;(req as any).user = {
+				_id: decrypted._id,
+				email: decrypted.email,
+				type: decrypted.type
+			}
 
 			next()
 		} catch (error) {
@@ -56,5 +63,38 @@ export const middleware = (
 				message: "Auth error!"
 			})
 		}
+	}
+}
+
+// Role-based middleware
+export const isSuperAdmin = (
+	req: Request,
+	res: Response<Res>,
+	next: NextFunction
+): void => {
+	const user = (req as any).user
+	if (user && user.type === "SuperAdmin") {
+		next()
+	} else {
+		res.status(ResponseCode.AUTH_ERROR).json({
+			status: false,
+			message: "Access denied. SuperAdmin only."
+		})
+	}
+}
+
+export const isAdmin = (
+	req: Request,
+	res: Response<Res>,
+	next: NextFunction
+): void => {
+	const user = (req as any).user
+	if (user && (user.type === "Admin" || user.type === "SuperAdmin")) {
+		next()
+	} else {
+		res.status(ResponseCode.AUTH_ERROR).json({
+			status: false,
+			message: "Access denied. Admin only."
+		})
 	}
 }
