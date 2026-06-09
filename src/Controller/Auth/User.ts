@@ -20,6 +20,7 @@ const login = (
 	res: Response<Res<UserLoginResponse>>
 ): void => {
 	const { email, password } = req.body
+	console.log("Login attempt for email:", email, "+ password:", password) // Debug log
 
 	UserModel.findOne({ email })
 		.then((result) => {

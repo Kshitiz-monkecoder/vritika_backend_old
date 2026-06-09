@@ -40,6 +40,7 @@ import {
 	GetRoleCommissionById,
 	UpdateRoleCommission
 } from "../Controller/Admin/RoleCommissionController"
+import AnalyticsRouter from "./Analytics"
 
 const AdminRouter: Router = Router()
 
@@ -77,5 +78,7 @@ AdminRouter.put("/role-commission/:id", UpdateRoleCommission)
 AdminRouter.get("/role-commission", GetAllRoleCommissions)
 AdminRouter.get("/role-commission/:id", GetRoleCommissionById)
 AdminRouter.delete("/role-commission/:id", DeleteRoleCommission)
+
+AdminRouter.use(AnalyticsRouter)
 
 export default AdminRouter
