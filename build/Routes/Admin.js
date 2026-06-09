@@ -1,4 +1,7 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const BrandController_1 = require("../Controller/Admin/BrandController");
@@ -7,6 +10,7 @@ const UserController_1 = require("../Controller/Admin/UserController");
 const SalesPersonController_1 = require("../Controller/Admin/SalesPersonController");
 const Dashboard_1 = require("../Controller/Admin/Dashboard");
 const RoleCommissionController_1 = require("../Controller/Admin/RoleCommissionController");
+const Analytics_1 = __importDefault(require("./Analytics"));
 const AdminRouter = (0, express_1.Router)();
 AdminRouter.get("/dashboad", Dashboard_1.GetAllAdmins);
 AdminRouter.get("/dashboad-admin/:id", Dashboard_1.GetSalesPersonByAdmin);
@@ -37,4 +41,5 @@ AdminRouter.put("/role-commission/:id", RoleCommissionController_1.UpdateRoleCom
 AdminRouter.get("/role-commission", RoleCommissionController_1.GetAllRoleCommissions);
 AdminRouter.get("/role-commission/:id", RoleCommissionController_1.GetRoleCommissionById);
 AdminRouter.delete("/role-commission/:id", RoleCommissionController_1.DeleteRoleCommission);
+AdminRouter.use(Analytics_1.default);
 exports.default = AdminRouter;
