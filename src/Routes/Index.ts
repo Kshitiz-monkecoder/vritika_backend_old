@@ -11,6 +11,7 @@ import { CreateSalesPerson, SalesPersonOtpSent, SalesPersonVerifyOtp } from "../
 import SalesPersonRoute from "./SalesPerson"
 import { GetAllState } from "../Controller/Common"
 import { QuotationPdfGenerate } from "../Controller/SalesPerson/QuotationPdfController"
+import PublicAnalyticsRouter from "./PublicAnalytics"
 
 const Route: Router = Router()
 
@@ -28,6 +29,8 @@ Route.post("/sales-person/verify-otp", SalesPersonVerifyOtp)
 Route.post("/sales-person/register", CreateSalesPerson)
 
 Route.get("/sales-person/quotation-pdf/:id", QuotationPdfGenerate)
+
+Route.use('/admin', PublicAnalyticsRouter)
 
 Route.use(middleware)
 
