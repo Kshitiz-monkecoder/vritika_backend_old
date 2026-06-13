@@ -40,25 +40,31 @@ interface OldCommissionDoc {
 }
 
 function buildLevelToCommissionMap(
-	commissions: OldCommissionDoc[]
+  commissions: OldCommissionDoc[]
 ): Map<number, OldCommissionDoc> {
-	const map = new Map<number, OldCommissionDoc>()
+  const map = new Map<number, OldCommissionDoc>()
 
-	// Only use active commissions (status: true) for sales-person type
-	const active = commissions
-		.filter((c) => c.status === true && c.type === "sales-person")
-		.sort(
-			(a: any, b: any) =>
-				new Date(a.createdAt ?? 0).getTime() -
-				new Date(b.createdAt ?? 0).getTime()
-		)
+  const active = commissions
+    .filter((c) => {
+      const isActive = c.status === true || (c.status as any) === "Active" || (c.status as any) === "active"
+      const isSpType = !c.type || c.type === "sales-person"
+      return isActive && isSpType
+    })
+    .sort(
+      (a: any, b: any) =>
+        new Date(a.createdAt ?? 0).getTime() -
+        new Date(b.createdAt ?? 0).getTime()
+    )
 
-	for (const doc of active) {
-		// Later entries overwrite earlier ones — newest config wins per level
-		map.set(doc.level, doc)
-	}
+  for (const doc of active) {
+    // commissionPercentage nahi toh commission use karo
+    if (!doc.commissionPercentage && (doc as any).commission) {
+      doc.commissionPercentage = (doc as any).commission
+    }
+    map.set(doc.level, doc)
+  }
 
-	return map
+  return map
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
